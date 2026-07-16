@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/alfredoprograma/mks/internal/config"
+	"github.com/go-chi/chi/v5"
 )
 
 func main() {
@@ -13,5 +15,12 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	fmt.Println(cfg)
+	router := chi.NewRouter()
+
+	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("Hello world"))
+	})
+
+	log.Println(fmt.Sprintf("starting server at %d", cfg.Port))
+	http.ListenAndServe(fmt.Sprintf(":%d", cfg.Port), router)
 }

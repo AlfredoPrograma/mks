@@ -23,7 +23,7 @@ var (
 	ErrInvalidIntField         = errors.New("invalid integer field")
 )
 
-func parseEnvironment(key string) (Environment, error) {
+func parseEnvironmentField(key string) (Environment, error) {
 	env := Environment(os.Getenv(key))
 
 	switch env {
@@ -34,7 +34,7 @@ func parseEnvironment(key string) (Environment, error) {
 	}
 }
 
-func parseIntConfig(key string) (int, error) {
+func parseIntField(key string) (int, error) {
 	val, err := strconv.Atoi(os.Getenv(key))
 	if err != nil {
 		return 0, fmt.Errorf("%w: %s", ErrInvalidIntField, key)
@@ -72,12 +72,18 @@ type DBConfig struct {
 type Config struct {
 	DB          DBConfig
 	Environment Environment
+	Port        int
 }
 
 func Load() (Config, error) {
 	errors := []error{}
 
-	env, err := parseEnvironment("ENVIRONMENT")
+	env, err := parseEnvironmentField("ENVIRONMENT")
+	if err != nil {
+		errors = append(errors, err)
+	}
+
+	port, err := parseIntField("PORT")
 	if err != nil {
 		errors = append(errors, err)
 	}
@@ -97,7 +103,7 @@ func Load() (Config, error) {
 		errors = append(errors, err)
 	}
 
-	dbPort, err := parseIntConfig("DB_PORT")
+	dbPort, err := parseIntField("DB_PORT")
 	if err != nil {
 		errors = append(errors, err)
 	}
@@ -108,6 +114,7 @@ func Load() (Config, error) {
 
 	return Config{
 		Environment: env,
+		Port:        port,
 		DB: DBConfig{
 			Host:     dbHost,
 			Port:     dbPort,
