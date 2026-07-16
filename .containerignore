@@ -1,0 +1,12 @@
+# VCS and tooling
+.git
+.gitignore
+.claude
+
+# Secrets and local config
+.env
+
+# Container build files
+Containerfile
+.containerignore
+compose.yaml
