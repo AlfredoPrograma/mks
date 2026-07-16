@@ -43,7 +43,7 @@ func parseIntField(key string) (int, error) {
 	return val, nil
 }
 
-func getRequiredConfig(key string) (string, error) {
+func getRequiredField(key string) (string, error) {
 	val, exists := os.LookupEnv(key)
 	if !exists {
 		return "", fmt.Errorf("%w: %s", ErrRequiredFieldMissing, key)
@@ -67,6 +67,7 @@ type DBConfig struct {
 	Port     int
 	User     string
 	Password string
+	Name     string
 }
 
 type Config struct {
@@ -88,17 +89,22 @@ func Load() (Config, error) {
 		errors = append(errors, err)
 	}
 
-	dbHost, err := getRequiredConfig("DB_HOST")
+	dbHost, err := getRequiredField("DB_HOST")
 	if err != nil {
 		errors = append(errors, err)
 	}
 
-	dbUser, err := getRequiredConfig("DB_USER")
+	dbUser, err := getRequiredField("DB_USER")
 	if err != nil {
 		errors = append(errors, err)
 	}
 
-	dbPassword, err := getRequiredConfig("DB_PASSWORD")
+	dbName, err := getRequiredField("DB_NAME")
+	if err != nil {
+		errors = append(errors, err)
+	}
+
+	dbPassword, err := getRequiredField("DB_PASSWORD")
 	if err != nil {
 		errors = append(errors, err)
 	}
@@ -117,6 +123,7 @@ func Load() (Config, error) {
 		Port:        port,
 		DB: DBConfig{
 			Host:     dbHost,
+			Name:     dbName,
 			Port:     dbPort,
 			User:     dbUser,
 			Password: dbPassword,

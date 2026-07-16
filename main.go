@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/alfredoprograma/mks/internal/config"
+	"github.com/alfredoprograma/mks/internal/database"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -15,10 +17,14 @@ func main() {
 		log.Fatalln(err)
 	}
 
+	_, err = database.Connect(context.Background(), cfg.DB)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	router := chi.NewRouter()
 
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello world"))
 	})
 
 	log.Println(fmt.Sprintf("starting server at %d", cfg.Port))
