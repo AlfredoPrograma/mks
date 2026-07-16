@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"net/http"
 
 	"github.com/alfredoprograma/mks/internal/config"
 	"github.com/alfredoprograma/mks/internal/database"
-	"github.com/go-chi/chi/v5"
+	"github.com/alfredoprograma/mks/internal/users"
+	"github.com/labstack/echo/v5"
 )
 
 func main() {
@@ -17,16 +17,18 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	_, err = database.Connect(context.Background(), cfg.DB)
+	queries, err := database.Connect(context.Background(), cfg.DB)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	router := chi.NewRouter()
+	app := echo.New()
+	apiRouter := app.Group("/api/v1")
 
-	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-	})
+	usersModule := users.NewModule(queries)
+	usersModule.Controller.RegisterRoutes(apiRouter.Group("/users"))
 
-	log.Println(fmt.Sprintf("starting server at %d", cfg.Port))
-	http.ListenAndServe(fmt.Sprintf(":%d", cfg.Port), router)
+	if err := app.Start(fmt.Sprintf(":%d", cfg.Port)); err != nil {
+		log.Fatalln(err)
+	}
 }

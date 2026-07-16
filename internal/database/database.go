@@ -7,7 +7,7 @@ import (
 
 	"github.com/alfredoprograma/mks/internal/config"
 	"github.com/alfredoprograma/mks/internal/queries"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 var (
@@ -15,7 +15,7 @@ var (
 )
 
 func Connect(ctx context.Context, dbConfig config.DBConfig) (*queries.Queries, error) {
-	dsn := fmt.Sprintf(
+	connString := fmt.Sprintf(
 		"postgresql://%s:%s@%s:%d/%s?sslmode=disable",
 		dbConfig.User,
 		dbConfig.Password,
@@ -24,7 +24,7 @@ func Connect(ctx context.Context, dbConfig config.DBConfig) (*queries.Queries, e
 		dbConfig.Name,
 	)
 
-	conn, err := pgx.Connect(ctx, dsn)
+	conn, err := pgxpool.New(ctx, connString)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", ErrCannotConnectDB, err)
 	}

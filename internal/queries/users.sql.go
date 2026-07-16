@@ -10,7 +10,7 @@ import (
 )
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users (email, password) VALUES ($1, $2) RETURNING (id, email)
+INSERT INTO users (email, password) VALUES ($1, $2) RETURNING id, email
 `
 
 type CreateUserParams struct {
@@ -18,25 +18,30 @@ type CreateUserParams struct {
 	Password string
 }
 
-func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (interface{}, error) {
-	row := q.db.QueryRow(ctx, createUser, arg.Email, arg.Password)
-	var column_1 interface{}
-	err := row.Scan(&column_1)
-	return column_1, err
-}
-
-const getUser = `-- name: GetUser :one
-SELECT id, email FROM users WHERE id = $1
-`
-
-type GetUserRow struct {
+type CreateUserRow struct {
 	ID    int32
 	Email string
 }
 
-func (q *Queries) GetUser(ctx context.Context, id int32) (GetUserRow, error) {
-	row := q.db.QueryRow(ctx, getUser, id)
-	var i GetUserRow
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error) {
+	row := q.db.QueryRow(ctx, createUser, arg.Email, arg.Password)
+	var i CreateUserRow
+	err := row.Scan(&i.ID, &i.Email)
+	return i, err
+}
+
+const getUserByID = `-- name: GetUserByID :one
+SELECT id, email FROM users WHERE id = $1
+`
+
+type GetUserByIDRow struct {
+	ID    int32
+	Email string
+}
+
+func (q *Queries) GetUserByID(ctx context.Context, id int32) (GetUserByIDRow, error) {
+	row := q.db.QueryRow(ctx, getUserByID, id)
+	var i GetUserByIDRow
 	err := row.Scan(&i.ID, &i.Email)
 	return i, err
 }
