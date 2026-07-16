@@ -1,0 +1,34 @@
+name: Ship API Container to ECR
+on:
+  - push
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+      - name: Setup Go
+        uses: actions/setup-go@v7
+        with:
+          go-version: '1.26'
+          cache: true
+      - name: Run unit tests
+        run: go test -race -v ./...
+
+  build-container:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+      - name: Setup docker
+        uses: docker/setup-docker-action@v5
+      - name: Get short sha
+        id: sha
+        run: echo "short=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+      - name: Build api target container
+        run: >
+          docker build
+          -f Containerfile
+          -t mks-api:latest
+          -t mks-api:${{ steps.sha.outputs.short }}
+          --target runner .
