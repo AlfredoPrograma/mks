@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      name: api-pod
+      labels:
+        app: api
+    spec:
+      imagePullSecrets:
+        - name: ecr-creds
+      containers:
+        - name: api-container
+          image: 884891704616.dkr.ecr.us-east-1.amazonaws.com/mks:latest
+          ports:
+            - containerPort: 8080
