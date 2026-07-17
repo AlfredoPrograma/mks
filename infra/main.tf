@@ -1,5 +1,9 @@
 data "aws_caller_identity" "current" {}
 
+locals {
+  repository_for_oidc_sub = "repo:alfredoprograma@99158056/mks@1303112801:*"
+}
+
 resource "aws_iam_openid_connect_provider" "github" {
   url = "https://token.actions.githubusercontent.com"
   client_id_list = ["sts.amazonaws.com"]
@@ -25,7 +29,7 @@ data "aws_iam_policy_document" "github_assume" {
     condition {
       test = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
-      values = ["repo:alfredoprograma@99158056/mks@1303112801:*"]
+      values = [local.repository_for_oidc_sub]
     }
   }
 }
