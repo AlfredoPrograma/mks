@@ -73,18 +73,12 @@ type DBConfig struct {
 type Config struct {
 	DB          DBConfig
 	Environment Environment
-	Port        int
 }
 
 func Load() (Config, error) {
 	errors := []error{}
 
 	env, err := parseEnvironmentField("ENVIRONMENT")
-	if err != nil {
-		errors = append(errors, err)
-	}
-
-	port, err := parseIntField("PORT")
 	if err != nil {
 		errors = append(errors, err)
 	}
@@ -120,7 +114,6 @@ func Load() (Config, error) {
 
 	return Config{
 		Environment: env,
-		Port:        port,
 		DB: DBConfig{
 			Host:     dbHost,
 			Name:     dbName,

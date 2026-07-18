@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	"github.com/alfredoprograma/mks/internal/config"
@@ -28,7 +27,7 @@ func main() {
 	usersModule := users.NewModule(queries)
 	usersModule.Controller.RegisterRoutes(apiRouter.Group("/users"))
 
-	if err := app.Start(fmt.Sprintf(":%d", cfg.Port)); err != nil {
+	if err := app.Start(":8080"); err != nil {
 		log.Fatalln(err)
 	}
 }

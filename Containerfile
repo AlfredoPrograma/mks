@@ -25,4 +25,5 @@ USER mks
 COPY --from=builder --chown=mks:mks /app/mks .
 
 # Run application
+EXPOSE 8080
 CMD ["./mks"]
