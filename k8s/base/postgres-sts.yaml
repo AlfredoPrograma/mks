@@ -19,6 +19,22 @@ spec:
       containers:
         - name: postgres-container
           image: postgres:18.4-alpine
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: api-config-secret
+                  key: DB_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: api-config-secret
+                  key: DB_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: api-config-secret
+                  key: DB_NAME
           ports:
             - containerPort: 5432
           volumeMounts:

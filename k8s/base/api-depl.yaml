@@ -18,5 +18,8 @@ spec:
       containers:
         - name: api-container
           image: 884891704616.dkr.ecr.us-east-1.amazonaws.com/mks:latest
+          envFrom:
+            - secretRef:
+                name: api-config-secret
           ports:
             - containerPort: 8080

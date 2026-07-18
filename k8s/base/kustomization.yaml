@@ -4,6 +4,9 @@ kind: Kustomization
 resources:
   - api-depl.yaml
   - api-lb-svc.yaml
+  - api-config-external-secret.yaml
 
   - postgres-headless-svc.yaml
   - postgres-sts.yaml
+
+  - aws-secret-store.yaml
