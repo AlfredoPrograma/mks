@@ -1,0 +1,49 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: api-migrator-job
+spec:
+  template:
+    metadata:
+      name: app-migrator-pod
+      labels:
+        app: api-migrator
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: api-migrator-container
+          image: mks-migrator:latest # TODO: pull from ECR too?
+          imagePullPolicy: Never
+          env:
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: api-config-secret
+                  key: DB_HOST
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: api-config-secret
+                  key: DB_PORT
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: api-config-secret
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: api-config-secret
+                  key: DB_PASSWORD
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: api-config-secret
+                  key: DB_NAME
+            - name: GOOSE_DRIVER
+              value: postgres
+            - name: GOOSE_DBSTRING
+              value: postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=disable
+          args:
+            - "--"
+            - "up"

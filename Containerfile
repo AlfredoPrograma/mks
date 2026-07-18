@@ -12,6 +12,12 @@ COPY . .
 RUN CGO_ENABLED=0 GOOS=linux \
     go build -trimpath -ldflags="-s -w" -o mks .
 
+# ------ MIGRATOR STAGE -----
+FROM kukymbr/goose-docker:3.27.2 AS migrator
+
+WORKDIR /migrations
+COPY database/migrations .
+
 # ------ RUNNER STAGE -----
 FROM alpine:3.23.5 AS runner
 

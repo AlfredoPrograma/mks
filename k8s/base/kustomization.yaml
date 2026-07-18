@@ -5,6 +5,7 @@ resources:
   - api-depl.yaml
   - api-lb-svc.yaml
   - api-config-external-secret.yaml
+  - api-migrator-job.yaml
 
   - postgres-headless-svc.yaml
   - postgres-sts.yaml
